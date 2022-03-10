@@ -86,26 +86,28 @@ out = cv2.VideoWriter('output-' + MODELNAME + '.avi', fourcc, fps, (w, h))
 
 while True:
     success,img = cap.read()
+    # print(success, img)
 
     classIds, confs, bbox = net.detect(img,confThreshold=thres,nmsThreshold = nms_threshold)
     indices = cv2.dnn.NMSBoxes(bbox,confs,thres,nms_threshold)
 
-    for i in indices:
-        if classNames[classIds[i]].upper() == "PERSON":
-            f.setKwargs(score=str(confs[i] * 100)[0:4])
-        x,y,w,h = bbox[i]
-        color = colors[classIds[i]]
-        cv2.rectangle(img, (x,y),(x+w,h+y), color, thickness=2)
-        cv2.putText(img,classNames[classIds[i]].upper() + ":" + str(confs[i] * 100)[:4],(x+5,y+20),
-        cv2.FONT_ITALIC,0.67,color,2)
-            
-    f.calTime()
-    cv2.putText(img,str(f.FPS),(15,30), cv2.FONT_ITALIC,1,(255,127,127),4)
+    if success:
+        for i in indices:
+            if classNames[classIds[i]].upper() == "PERSON":
+                f.setKwargs(score=str(confs[i] * 100)[0:4])
+            x,y,w,h = bbox[i]
+            color = colors[classIds[i]]
+            cv2.rectangle(img, (x,y),(x+w,h+y), color, thickness=2)
+            cv2.putText(img,classNames[classIds[i]].upper() + ":" + str(confs[i] * 100)[:4],(x+5,y+20),
+            cv2.FONT_ITALIC,0.67,color,2)
+                
+        f.calTime()
+        cv2.putText(img,str(f.FPS),(15,30), cv2.FONT_ITALIC,1,(255,127,127),4)
 
-    out.write(img)
-    cv2.imshow("Output",img)
-    if cv2.waitKey(1) == 27:
-        break
+        out.write(img)
+        cv2.imshow("Output",img)
+        if cv2.waitKey(1) == 27:
+            break
 
 cap.release()
 out.release()
