@@ -1,6 +1,4 @@
-from asyncio.windows_events import NULL
 import os
-from timeit import timeit
 import psutil
 import threading
 import time
@@ -46,7 +44,7 @@ class FileStat(CpuStat, FrameStat):
         self.fileName = fileName
         self.f = open(self.fileName, 'a')
         self.f.write(time.strftime('%c', time.localtime(time.time())) + "\n")
-        self.keyDict = NULL
+        self.keyDict = None
 
     def fileOpen(self):
         self.f = open(self.fileName, 'a')
@@ -79,7 +77,7 @@ class FileStat(CpuStat, FrameStat):
     def fstatWriteSecArgs(self, sec):
         kwarg = self.keyDict
         if isinstance(self.f, io.TextIOWrapper):
-            if kwarg != NULL:
+            if kwarg != None:
                 self.fstatWrite(**kwarg)
             else:
                 self.fstatWrite()
