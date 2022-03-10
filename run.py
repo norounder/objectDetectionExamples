@@ -31,20 +31,29 @@ if sys.argv[1] == "h" or sys.argv[1] == "help":
     print("    List of Models     -> yolov3-320     -> yolov3-tiny     -> mobilenet     ")
     sys.exit()
 
-
-
 if sys.argv[1] == "yolov3-320":
     CFG = VERSION["yolov3-320"]["cfg"]
     WEIGHTS = VERSION["yolov3-320"]["weights"]
     SUBDIR = "YOLO"
+    inputSize = 416
+    inputScale = 0.00392
+    inputMean = 0
 elif sys.argv[1] == "yolov3-tiny":
     CFG = VERSION["yolov3-tiny"]["cfg"]
     WEIGHTS = VERSION["yolov3-tiny"]["weights"]
+    SUBDIR = "YOLO"
+    inputSize = 416
+    inputScale = 0.00392
+    inputMean = 0
 elif sys.argv[1] == "mobilenet":
     CFG = VERSION["mobilenet"]["cfg"]
     WEIGHTS = VERSION["mobilenet"]["weights"]
     SUBDIR = "MobileNet"
+    inputSize = 320
+    inputScale = 1.0 / 127.5
+    inputMean = (127.5, 127.5, 127.5)
 else:
+    print("There's no kind of model what you input")
     sys.exit()
 
 MODELNAME = sys.argv[1]
@@ -67,9 +76,9 @@ cap = cv2.VideoCapture(0)
 colors = np.random.uniform(0, 255, size=(len(classNames), 3))
  
 net = cv2.dnn_DetectionModel(weightsPath,configPath)
-net.setInputSize(320,320)
-net.setInputScale(1.0/ 127.5)
-net.setInputMean((127.5, 127.5, 127.5))
+net.setInputSize(inputSize, inputSize)
+net.setInputScale(inputScale)
+net.setInputMean(inputMean)
 net.setInputSwapRB(True)
 # is equal to blob = cv2.dnn.blobFromImage(img, 1.0/127.5, (320,320), (127.5, 127.5, 127.5), True, crop=False)
 
