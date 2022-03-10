@@ -1,4 +1,5 @@
-import os
+from contextlib import ExitStack
+import os, sys
 import psutil
 import threading
 import time
@@ -45,6 +46,7 @@ class FileStat(CpuStat, FrameStat):
         self.f = open(self.fileName, 'a')
         self.f.write(time.strftime('%c', time.localtime(time.time())) + "\n")
         self.keyDict = None
+        self.exitStatus = False
 
     def fileOpen(self):
         self.f = open(self.fileName, 'a')
@@ -81,7 +83,13 @@ class FileStat(CpuStat, FrameStat):
                 self.fstatWrite(**kwarg)
             else:
                 self.fstatWrite()
-            threading.Timer(sec, self.fstatWriteSecArgs, [sec]).start()
+            if self.exitStatus == False:
+                threading.Timer(sec, self.fstatWriteSecArgs, [sec]).start()
+
+    def closeAll(self):
+        self.fileClose()
+        self.exitStatus = True
+        sys.exit(0)
 
     
 
@@ -105,3 +113,9 @@ if __name__ == "__main__":
         c.setKwargs(test='a'*i)
         i = i + 1
     c.fileClose()
+
+    for i in range(50000000):
+        i = i
+    print("end?")
+    c.closeAll()
+    sys.exit()
