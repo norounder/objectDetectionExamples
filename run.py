@@ -89,9 +89,8 @@ while True:
     # print(success, img)
 
     classIds, confs, bbox = net.detect(img,confThreshold=thres,nmsThreshold = nms_threshold)
-    indices = cv2.dnn.NMSBoxes(bbox,confs,thres,nms_threshold)
-
-    if success:
+    if isinstance(img, np.ndarray):
+        indices = cv2.dnn.NMSBoxes(bbox,confs,thres,nms_threshold)
         for i in indices:
             if classNames[classIds[i]].upper() == "PERSON":
                 f.setKwargs(score=str(confs[i] * 100)[0:4])
